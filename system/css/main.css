@@ -268,7 +268,7 @@ header img {
 #container,
 #container-discov {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   justify-items: center;
   gap: 20px;
   padding: 20px;
