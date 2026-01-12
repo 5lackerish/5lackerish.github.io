@@ -665,3 +665,27 @@ body {
   min-height: 100%;
   background: transparent;
 }
+
+
+
+
+
+
+
+#container,
+#container-discov {
+  display: grid;
+  /* Change auto-fill to 5 */
+  grid-template-columns: repeat(5, 1fr); 
+  justify-items: center;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px; /* Optional: Keeps the row from getting too wide on huge monitors */
+  margin: 0 auto;    /* Centers the grid if you use max-width */
+}
+
+#container div,
+#container-discov div {
+  width: 100%;       /* Let the card fill the 1/5th column width */
+  max-width: 220px;  /* Keep the card from getting giant */
+}
