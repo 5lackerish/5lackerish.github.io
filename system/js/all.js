@@ -1,5 +1,6 @@
 /* ==========================================================
-   WannaSmile | Unified JS Loader & UI Logic (FIXED)
+   WannaSmile | Unified JS Loader & UI Logic
+   Preloader-Free Rewrite
    ========================================================== */
 (() => {
   "use strict";
@@ -8,55 +9,21 @@
      Utilities
   --------------------------- */
   const clamp = (v, a = 0, b = 100) => Math.min(b, Math.max(a, v));
+  const delay = (ms) => new Promise((r) => setTimeout(r, ms));
   const safeStr = (v) => (v == null ? "" : String(v));
+  const rafAsync = () => new Promise((r) => requestAnimationFrame(r));
+  const debounce = (fn, ms = 150) => {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  };
 
   /* ---------------------------
-     Preloader
-  --------------------------- */
-  const Preloader = (() => {
-    let total = 1;
-    let loaded = 0;
-    let root, bar, counter;
-
-    const init = () => {
-      root = document.getElementById("preloader");
-      bar = document.getElementById("progressBar");
-      counter = document.getElementById("counter");
-      update();
-    };
-
-    const setTotal = (n) => {
-      total = Math.max(1, n);
-      update();
-    };
-
-    const tick = () => {
-      loaded++;
-      update();
-    };
-
-    const update = () => {
-      const pct = clamp(Math.round((loaded / total) * 100));
-      if (bar) bar.style.width = pct + "%";
-      if (counter) counter.textContent = pct + "%";
-    };
-
-    const finish = () => {
-      if (!root) return;
-      setTimeout(() => {
-        root.classList.add("hidden");
-        setTimeout(() => (root.style.display = "none"), 600);
-      }, 300);
-    };
-
-    return { init, setTotal, tick, finish };
-  })();
-
-  /* ---------------------------
-     Sort Mode
+     Sort Mode Control
   --------------------------- */
   const getSortMode = () => localStorage.getItem("sortMode") || "sheet";
-
   document.addEventListener("sortModeChanged", () => {
     if (window.assetsData && typeof window.refreshCards === "function") {
       window.refreshCards();
@@ -64,14 +31,14 @@
   });
 
   /* ---------------------------
-     DOM & Config
+     DOM & Config Initialization
   --------------------------- */
   function initElements() {
     const $ = (sel) => {
       try {
         if (!sel) return null;
         if (/^[A-Za-z0-9\-_]+$/.test(sel)) return document.getElementById(sel);
-        return document.querySelector(sel);
+        return document.querySelector(sel) || null;
       } catch {
         return null;
       }
@@ -94,8 +61,7 @@
     window.config = {
       fallbackImage:
         "https://raw.githubusercontent.com/01110010-00110101/01110010-00110101.github.io/main/system/images/404_blank.png",
-      fallbackLink:
-        "https://01110010-00110101.github.io./source/dino/",
+      fallbackLink: "https://01110010-00110101.github.io./source/dino/",
       gifBase:
         "https://raw.githubusercontent.com/01110010-00110101/01110010-00110101.github.io/main/system/images/GIF/",
       sheetUrl:
@@ -108,7 +74,7 @@
   }
 
   /* ---------------------------
-     Favorites
+     Favorites System
   --------------------------- */
   function initFavorites() {
     try {
@@ -118,28 +84,23 @@
       window.favorites = new Set();
     }
 
-    window.saveFavorites = () => {
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify([...window.favorites])
-      );
-    };
+    window.saveFavorites = () =>
+      localStorage.setItem("favorites", JSON.stringify([...window.favorites]));
 
     window.refreshCards = () => {
-      if (!window.assetsData) return [];
+      if (!window.assetsData || typeof createAssetCards !== "function") return [];
       const promises = createAssetCards(window.assetsData);
-      if (typeof window.renderPage === "function") window.renderPage();
-      if (typeof window.startPlaceholderCycle === "function")
-        window.startPlaceholderCycle();
+      if (typeof renderPage === "function") renderPage();
+      if (typeof startPlaceholderCycle === "function") startPlaceholderCycle();
       return promises;
     };
   }
 
   /* ---------------------------
-     Asset Cards
+     Asset Card Builder
   --------------------------- */
   function createAssetCards(data) {
-    const container = window.dom?.container;
+    const { container } = dom || {};
     if (!container) return [];
 
     container.innerHTML = "";
@@ -180,10 +141,12 @@
 
       const card = document.createElement("div");
       card.className = "asset-card";
-      card.dataset.title = title.toLowerCase();
-      card.dataset.author = author.toLowerCase();
-      card.dataset.page = String(pageNum);
-      card.dataset.filtered = "true";
+      Object.assign(card.dataset, {
+        title: title.toLowerCase(),
+        author: author.toLowerCase(),
+        page: String(pageNum),
+        filtered: "true",
+      });
 
       const a = document.createElement("a");
       a.href = link;
@@ -193,6 +156,12 @@
 
       const wrapper = document.createElement("div");
       wrapper.className = "asset-img-wrapper";
+      Object.assign(wrapper.style, {
+        position: "relative",
+        display: "inline-block",
+        borderRadius: "14px",
+        overflow: "hidden",
+      });
 
       const img = document.createElement("img");
       img.alt = title;
@@ -211,31 +180,46 @@
         };
         tmp.src = imageSrc;
       });
-
-      imagePromises.push(imgPromise);
+      imagePromises.push({ promise: imgPromise, page: pageNum });
       wrapper.appendChild(img);
 
-      const addOverlay = (src, alt, cls, full = false) => {
+      const addOverlay = (src, alt, cls, fullCover = false) => {
         const o = document.createElement("img");
         o.src = src;
         o.alt = alt;
         o.className = `status-overlay ${cls}`;
-        o.style.zIndex = full ? "10" : "5";
+        Object.assign(o.style, {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          pointerEvents: "none",
+          zIndex: fullCover ? "10" : "5",
+        });
         wrapper.appendChild(o);
       };
 
       if (statusField === "featured")
-        addOverlay(badgeMap.featured, "featured", "overlay-featured");
+        addOverlay(badgeMap.featured, "featured badge", "overlay-featured");
       if (statusField === "new")
-        addOverlay(badgeMap.new, "new", "overlay-new");
+        addOverlay(badgeMap.new, "new badge", "overlay-new");
       if (statusField === "fixed")
-        addOverlay(badgeMap.fixed, "fixed", "overlay-fixed");
+        addOverlay(badgeMap.fixed, "fixed badge", "overlay-fixed");
+
       if (["new", "updated"].includes(status))
-        addOverlay(`${config.gifBase}${status}.gif`, status, `status-${status}`);
+        addOverlay(
+          `${config.gifBase}${status}.gif`,
+          `${status} badge`,
+          `status-gif status-${status}`
+        );
+
       if (status === "fix") {
-        addOverlay(badgeMap.fix, "fix", "overlay-fix", true);
+        addOverlay(badgeMap.fix, "fixing overlay", "overlay-fix", true);
         card.classList.add("fix");
       }
+
       if (status === "soon") card.classList.add("soon");
 
       a.appendChild(wrapper);
@@ -244,20 +228,26 @@
       titleEl.textContent = title || "Untitled";
 
       const authorEl = document.createElement("p");
-      authorEl.textContent = author;
+      authorEl.textContent = author || "";
 
       const star = document.createElement("button");
       star.className = "favorite-star";
       star.textContent = isFav(title) ? "★" : "☆";
-      star.onclick = (e) => {
+      Object.assign(star.style, {
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+      });
+
+      star.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const key = title.toLowerCase();
-        window.favorites.has(key)
-          ? window.favorites.delete(key)
-          : window.favorites.add(key);
-        window.saveFavorites();
+        if (window.favorites.has(key)) window.favorites.delete(key);
+        else window.favorites.add(key);
+        saveFavorites();
         star.textContent = window.favorites.has(key) ? "★" : "☆";
-      };
+      });
 
       card.append(a, titleEl, authorEl, star);
       frag.appendChild(card);
@@ -268,68 +258,234 @@
   }
 
   /* ---------------------------
-     Load Assets
+     Paging + Search + Filter
   --------------------------- */
-  async function loadAssets() {
-    Preloader.setTotal(1);
+  function initPaging() {
+    const { container, pageIndicator, searchInput, searchBtn } = dom || {};
+    if (!container) return;
 
-    let raw = [];
-    try {
-      const res = await fetch(config.sheetUrl, { cache: "no-store" });
-      raw = await res.json();
-    } catch {
-      raw = [];
+    const quoteWrapper = document.getElementById("quoteWrapper");
+
+    let errorGif = document.getElementById("noResultsGif");
+    if (!errorGif) {
+      errorGif = document.createElement("img");
+      errorGif.id = "noResultsGif";
+      errorGif.src = "system/images/GIF/searching.gif";
+      Object.assign(errorGif.style, {
+        display: "none",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "128px",
+        height: "128px",
+        opacity: "0",
+        transition: "opacity 0.25s ease",
+        pointerEvents: "none",
+        zIndex: "1000",
+      });
+      container.parentElement.appendChild(errorGif);
     }
 
-    Preloader.tick();
+    const getAllCards = () => [...container.querySelectorAll(".asset-card")];
+    const getFilteredCards = () =>
+      getAllCards().filter((c) => c.dataset.filtered === "true");
+    const getPages = () =>
+      [...new Set(getAllCards().map((c) => +c.dataset.page).filter(Boolean))].sort(
+        (a, b) => a - b
+      );
 
+    const updateVisibility = () => {
+      const visibleCards = getFilteredCards().length;
+      if (visibleCards === 0) {
+        errorGif.style.display = "block";
+        requestAnimationFrame(() => (errorGif.style.opacity = "1"));
+        if (quoteWrapper) quoteWrapper.style.opacity = "0.5";
+      } else {
+        errorGif.style.opacity = "0";
+        setTimeout(() => {
+          if (parseFloat(errorGif.style.opacity) === 0)
+            errorGif.style.display = "none";
+        }, 250);
+        if (quoteWrapper) quoteWrapper.style.opacity = "1";
+      }
+    };
+
+    window.renderPage = () => {
+      const pages = getPages();
+      if (!pages.length) return;
+
+      if (!window._pageRestored) {
+        const saved = +sessionStorage.getItem("currentPage") || pages[0];
+        window.currentPage = pages.includes(saved) ? saved : pages[0];
+        window._pageRestored = true;
+      }
+
+      getAllCards().forEach((c) => {
+        const visible =
+          +c.dataset.page === +window.currentPage &&
+          c.dataset.filtered === "true";
+        c.style.display = visible ? "" : "none";
+      });
+
+      if (pageIndicator) {
+        const idx = pages.indexOf(+window.currentPage);
+        pageIndicator.textContent = `Page ${idx + 1} of ${pages.length}`;
+      }
+
+      sessionStorage.setItem("currentPage", window.currentPage);
+      updateVisibility();
+    };
+
+    window.filterAssets = (q) => {
+      const query = safeStr(q).toLowerCase().trim();
+      const words = query.split(/\s+/).filter(Boolean);
+
+      getAllCards().forEach((c) => {
+        const haystack = `${c.dataset.title} ${c.dataset.author}`.toLowerCase();
+        let score = 0;
+        if (haystack.includes(query)) score += 3;
+        for (const w of words) if (haystack.includes(w)) score += 2;
+        c.dataset.filtered = score > 0 || !query ? "true" : "false";
+      });
+
+      renderPage();
+    };
+
+    window.prevPage = () => {
+      const pages = getPages();
+      const i = pages.indexOf(+window.currentPage);
+      window.currentPage = i <= 0 ? pages.at(-1) : pages[i - 1];
+      renderPage();
+    };
+
+    window.nextPage = () => {
+      const pages = getPages();
+      const i = pages.indexOf(+window.currentPage);
+      window.currentPage =
+        i === -1 || i === pages.length - 1 ? pages[0] : pages[i + 1];
+      renderPage();
+    };
+
+    searchBtn?.addEventListener("click", () =>
+      filterAssets(searchInput.value)
+    );
+    searchInput?.addEventListener(
+      "input",
+      debounce(() => filterAssets(searchInput.value), 200)
+    );
+
+    window.currentPage = +sessionStorage.getItem("currentPage") || 1;
+    renderPage();
+  }
+
+  /* ---------------------------
+     Placeholder Cycle
+  --------------------------- */
+  function initPlaceholders() {
+    const { searchInput } = dom || {};
+    if (!searchInput) return;
+
+    const FADE = 400,
+      HOLD = 4000;
+
+    const fadePlaceholder = (input, text, cb) => {
+      input.classList.add("fade-out");
+      setTimeout(() => {
+        input.placeholder = text;
+        input.classList.remove("fade-out");
+        input.classList.add("fade-in");
+        setTimeout(() => {
+          input.classList.remove("fade-in");
+          cb?.();
+        }, FADE);
+      }, FADE);
+    };
+
+    window.startPlaceholderCycle = () => {
+      if (window._placeholderRunning) return;
+      window._placeholderRunning = true;
+      const loop = async () => {
+        const visible = document.querySelectorAll(
+          `.asset-card[data-filtered="true"][data-page="${window.currentPage}"]`
+        ).length;
+        await new Promise((r) =>
+          fadePlaceholder(searchInput, `${visible} assets on this page`, r)
+        );
+        await delay(HOLD);
+        await new Promise((r) =>
+          fadePlaceholder(searchInput, "Search assets...", r)
+        );
+        await delay(HOLD);
+        if (window._placeholderRunning) loop();
+      };
+      loop();
+    };
+  }
+
+  /* ---------------------------
+     Update Popup
+  --------------------------- */
+  async function initUpdatePopup() {
+    const p = dom.updatePopup;
+    if (!p) return;
+
+    try {
+      const res = await fetch(`${config.sheetUrl}?mode=version-message`, {
+        cache: "no-store",
+      });
+      const raw = await res.json();
+      const latest = raw?.at(-1) || {
+        version: "0.0.0",
+        message: "Welcome!",
+      };
+
+      const titleEl = p.querySelector("h2");
+      const msgEl = p.querySelector("p");
+      if (titleEl)
+        titleEl.textContent = `Version ${latest.version} Update!`;
+      if (msgEl) msgEl.textContent = latest.message;
+
+      setTimeout(() => p.classList.add("show"), 600);
+    } catch {}
+  }
+
+  /* ---------------------------
+     Asset Loader (Preloader-Free)
+  --------------------------- */
+  async function loadAssets() {
+    const res = await fetch(config.sheetUrl, { cache: "no-store" });
+    const raw = await res.json();
     const data = raw.filter((i) =>
       Object.values(i).some((v) => safeStr(v).trim())
     );
 
     window.assetsData = data;
 
-    const isFavPage = location.pathname
-      .toLowerCase()
-      .includes("favorites.html");
-
+    const isFavPage = location.pathname.toLowerCase().includes("favorites.html");
     const filtered = isFavPage
       ? data.filter((a) =>
           window.favorites.has(safeStr(a.title).toLowerCase())
         )
       : data;
 
-    const imagePromises = createAssetCards(filtered);
-    Preloader.setTotal(imagePromises.length + 1);
+    const promises = createAssetCards(filtered || []);
+    await Promise.all(promises.map((p) => p.promise));
 
-    for (const p of imagePromises) {
-      await p;
-      Preloader.tick();
-    }
-
-    if (typeof window.renderPage === "function") window.renderPage();
-    Preloader.tick();
+    if (typeof renderPage === "function") renderPage();
   }
 
   /* ---------------------------
-     Boot
+     DOM Bootstrap
   --------------------------- */
   document.addEventListener("DOMContentLoaded", async () => {
-    Preloader.init();
     initElements();
     initFavorites();
-
-    if (typeof window.initPaging === "function") window.initPaging();
-    if (typeof window.initPlaceholders === "function")
-      window.initPlaceholders();
-    if (typeof window.initUpdatePopup === "function")
-      await window.initUpdatePopup();
-
+    initPaging();
+    initPlaceholders();
+    await initUpdatePopup();
     await loadAssets();
-
-    if (typeof window.initQuotes === "function") await window.initQuotes();
-
-    Preloader.finish();
-    console.log("Everything ready and loaded properly");
+    if (typeof initQuotes === "function") await initQuotes();
+    console.log("Everything Running Perfectly.");
   });
 })();
