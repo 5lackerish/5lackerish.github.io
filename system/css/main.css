@@ -268,7 +268,7 @@ header img {
 #container,
 #container-discov {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   justify-items: center;
   gap: 20px;
   padding: 20px;
@@ -283,8 +283,8 @@ header img {
    ========================================== */
 #container div,
 #container-discov div {
-  width: 220px;
-  min-height: 200px;
+  width: 180px;
+  min-height: 160px;
   background: var(--card-bg);
   text-align: center;
   border-radius: 20px;
@@ -295,7 +295,7 @@ header img {
 
 #container div:hover,
 #container-discov div:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
 #container div img,
