@@ -122,21 +122,6 @@
 
 <link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/loading/v078xmasfixed.png">
 <link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-
-<script async defer src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"></script>
-<script>
-window.addEventListener("load", () => {
-  if (typeof Crate !== "undefined") {
-    new Crate({
-      server: "1451796462517096642",
-      channel: "1451796463368667218"
-    });
-  }
-});
-</script>
 
 <meta property="og:title" content="WannaSmile" />
 <meta property="og:description" content="WannaSmile is a personal web project showcasing various tools, pages, and experiments." />
@@ -153,6 +138,7 @@ window.addEventListener("load", () => {
 
 <body>
 
+<!-- Preloader -->
 <div id="preloader" class="preloader">
   <div id="loader-gif" style="background-image:url('../system/images/loading/vo8xmas.png');"></div>
   <div class="load-progress-bar">
@@ -162,6 +148,7 @@ window.addEventListener("load", () => {
   <div id="counter">0%</div>
 </div>
 
+<!-- Top Bar / Header -->
 <div id="topBar">
 <header>
 <nav class="nav-links">
@@ -231,6 +218,22 @@ window.addEventListener("load", () => {
 <a href="../pages/footer/version.html" id="footerVersion">Version loading...</a>
 </footer>
 
+<audio id="bgm" autoplay muted></audio>
+
+<!-- External Widgets -->
+<script async defer src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"></script>
+<script>
+window.addEventListener("load", () => {
+  if (typeof Crate !== "undefined") {
+    new Crate({
+      server: "1451796462517096642",
+      channel: "1451796463368667218"
+    });
+  }
+});
+</script>
+
+<!-- Core JS -->
 <script>
 const images=[
 "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/bleh.jpeg",
@@ -249,34 +252,34 @@ const images=[
 "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/starwalk.jpeg",
 "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/yum.jpeg"
 ];
+window.addEventListener("DOMContentLoaded",()=>{
 document.getElementById("pfp").src=images[Math.floor(Math.random()*images.length)];
+});
 </script>
 
 <script src="../system/js/settings.js" defer></script>
 <script src="../system/js/main.js" defer></script>
 <script src="../system/js/searcherror.js" defer></script>
-<script src="../system/js/index.js" defer></cript>
+<script src="../system/js/index.js" defer></script>
 <script src="../system/js/version.js" defer></script>
 <script src="../system/js/all.js" defer></script>
-<script src="../system/js/local-quotes.js"></script>
+<script src="../system/js/local-quotes.js" defer></script>
 <script src="../system/js/top.js" defer></script>
 <script src="../system/js/pageflipper.js" defer></script>
-
-<audio id="bgm" autoplay muted></audio>
 
 <script>
 const tracks=["audio/bgm1.mp3","audio/bgm2.mp3","audio/bgm3.mp3","audio/bgm4.mp3","audio/bgm5.mp3"];
 const bgm=document.getElementById("bgm");
 bgm.volume=0.2;
 function playRandomTrack(){
-bgm.src=tracks[Math.floor(Math.random()*tracks.length)];
-bgm.play().catch(()=>{});
+  bgm.src=tracks[Math.floor(Math.random()*tracks.length)];
+  bgm.play().catch(()=>{});
 }
 bgm.addEventListener("ended",playRandomTrack);
 playRandomTrack();
 window.addEventListener("click",()=>{
-bgm.muted=false;
-bgm.play().catch(()=>{});
+  bgm.muted=false;
+  bgm.play().catch(()=>{});
 },{once:true});
 </script>
 
