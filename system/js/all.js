@@ -115,7 +115,6 @@
     };
   }
 
-  /* ================= ADDED: scroll animation during loading ================= */
   async function loadingScrollAnimation() {
     const maxScroll = document.body.scrollHeight - window.innerHeight;
     for (let i = 0; i < 2; i++) {
@@ -126,22 +125,18 @@
     }
   }
 
-  /* ================= ADDED: page cycling during loading ================= */
   async function loadingPageCycle() {
     if (typeof nextPage !== "function" || typeof prevPage !== "function") return;
-
     for (let i = 1; i <= 10; i++) {
       nextPage();
       await delay(350);
     }
-
     for (let i = 10; i > 1; i--) {
       prevPage();
       await delay(200);
     }
   }
 
-  /* ================= ADDED: prerender hints ================= */
   function prerenderPages() {
     if (!("supports" in HTMLScriptElement)) return;
 
@@ -156,36 +151,44 @@
   }
 
   async function loadAssets() {
-    const res = await fetch(config.sheetUrl, { cache: "no-store" });
-    const raw = await res.json();
-    const data = raw.filter((i) =>
-      Object.values(i).some((v) => safeStr(v).trim())
-    );
+    let data = [];
+    let imagePromises = [];
+    let updateProgress;
 
-    window.assetsData = data;
+    try {
+      const res = await fetch(config.sheetUrl, { cache: "no-store" });
+      const raw = await res.json();
+      data = raw.filter((i) => Object.values(i).some((v) => safeStr(v).trim()));
+      window.assetsData = data;
 
-    const imagePromises = createAssetCards(data || []);
-    const updateProgress = initLoadingScreen(imagePromises.length || 1);
+      imagePromises = createAssetCards(data || []);
+      updateProgress = initLoadingScreen(imagePromises.length || 1);
 
-    /* ADDED: start visual loading illusion + prerender */
-    prerenderPages();
-    loadingScrollAnimation();
-    loadingPageCycle();
+      prerenderPages();
+      loadingScrollAnimation();
+      loadingPageCycle();
 
-    for (const p of imagePromises) {
-      await p;
-      updateProgress();
-    }
+      for (const p of imagePromises) {
+        await p;
+        updateProgress();
+      }
 
-    if (typeof renderPage === "function") renderPage();
+      if (typeof renderPage === "function") renderPage();
+    } catch (e) {
+      console.error("Asset loading failed:", e);
+    } finally {
+      if (updateProgress) {
+        updateProgress();
+      } else if (dom && dom.preloader) {
+        dom.preloader.classList.add("hidden");
+      }
 
-    /* ============ NEW: reset page to 1 after loading finishes ============ */
-    if (typeof goToPage === "function") {
-      goToPage(1); // attempts to set current page back to 1
-    } else if (typeof nextPage === "function" && typeof prevPage === "function") {
-      // fallback: cycle back to page 1
-      while (currentPage && currentPage > 1) {
-        prevPage();
+      if (typeof goToPage === "function") {
+        goToPage(1);
+      } else if (typeof nextPage === "function" && typeof prevPage === "function") {
+        while (currentPage && currentPage > 1) {
+          prevPage();
+        }
       }
     }
   }
