@@ -18,15 +18,22 @@
 }
 
 /* --------------------------------------------------
-   Preloader Overlay (Background Layer)
+   Preloader Overlay (The Background)
 -------------------------------------------------- */
 .preloader {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100vh;
-  background-color: #a5ff00;
-}
+  
+  /* Background Image Setup */
+  background-color: #a5ff00; /* Fallback color */
+  background-image: url("../system/images/loading/vo8xmas.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated; /* Keeps that retro look you had */
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -35,31 +42,13 @@
   z-index: 999999;
   opacity: 1;
   pointer-events: all;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-/* --------------------------------------------------
-   Image Overlay Layer
--------------------------------------------------- */
-#loader-gif {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-/* Fullscreen loading / loaded images */
-#loaderImage,
-#loadedImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-  image-rendering: pixelated;
-
+/* Hidden state for JS */
+.preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
@@ -67,10 +56,12 @@
    UI Layer (Text + Progress)
 -------------------------------------------------- */
 .loading-text {
-  color: #000;
-  font-size: 1rem;
+  color: #fff; /* Changed to white for better visibility on image */
+  font-size: 1.2rem;
   text-align: center;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.5); /* Shadow helps text pop */
   z-index: 2;
+  margin-bottom: 20px;
 }
 
 /* Percentage Counter */
@@ -78,12 +69,11 @@
   position: absolute;
   top: 16px;
   left: 16px;
-
   color: var(--preloader-text-color);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: 600;
-
   z-index: 2;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
 }
 
 /* --------------------------------------------------
@@ -91,17 +81,18 @@
 -------------------------------------------------- */
 .load-progress-bar {
   position: absolute;
-  bottom: 24px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
 
-  width: 500px;
+  width: 400px;
   max-width: 85%;
-  height: 8px;
+  height: 10px;
 
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3); /* Darker track for contrast */
+  border-radius: 10px;
   overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
 
   z-index: 2;
 }
@@ -109,8 +100,8 @@
 .load-progress-fill {
   width: 0%;
   height: 100%;
-
   background: #ffffff;
-  border-radius: 4px;
+  box-shadow: 0 0 10px #ffffff; /* Makes the bar glow slightly */
+  border-radius: 10px;
   transition: width 0.3s ease;
 }
