@@ -665,3 +665,67 @@ body {
   min-height: 100%;
   background: transparent;
 }
+/* ==========================================
+   Grid Layout (Locked to 5 Columns)
+   ========================================== */
+#container,
+#container-discov {
+  display: grid;
+  /* Forces exactly 5 columns regardless of screen width */
+  grid-template-columns: repeat(5, 1fr);
+  justify-items: center;
+  gap: 15px; /* Slightly reduced gap to fit 5 items comfortably */
+  padding: 20px;
+  background: var(--main-bg);
+  flex-grow: 1;
+  min-height: 0;
+  align-content: start;
+}
+
+/* ==========================================
+   Asset Cards
+   ========================================== */
+#container div,
+#container-discov div {
+  width: 100%;        /* Allows card to fill the 1/5th grid column */
+  max-width: 220px;   /* Keeps cards from getting too wide */
+  padding: 15px 10px; /* Even padding all around */
+  background: var(--card-bg);
+  text-align: center;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  
+  /* Flexbox keeps image and text centered vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;           /* Standard gap between image, name, and author */
+}
+
+#container div:hover,
+#container-discov div:hover {
+  transform: scale(1.03);
+}
+
+#container div img,
+#container-discov div img {
+  width: 120px;       /* Slightly smaller to ensure room for text */
+  height: 120px;      /* Fixed height prevents layout shifts */
+  display: block;
+  border-radius: 14px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+#container div img:hover,
+#container-discov div img:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive: Switch to 2 columns on mobile so it doesn't look cramped */
+@media (max-width: 800px) {
+  #container, #container-discov {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
