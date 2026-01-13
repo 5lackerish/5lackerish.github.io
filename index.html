@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slackerish | Home</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Slackerish | Home</title>
 
-  <link id="favicon" rel="icon"
-    href="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/favicons/logo.png" />
-  <!-- Styles (jsDelivr) -->
-  <style>
-  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
+<link id="favicon" rel="icon" href="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/favicons/logo.png" />
 
-/* --------------------------------------------------
-   Base Reset
--------------------------------------------------- */
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -21,52 +17,38 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* --------------------------------------------------
-   Global Variables
--------------------------------------------------- */
 :root {
   --preloader-text-color: #ffffff;
 }
 
-/* --------------------------------------------------
-   Preloader Root (Background Layer)
--------------------------------------------------- */
 .preloader {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-
   background-color: #a5ff00;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   z-index: 999999;
   opacity: 1;
   pointer-events: all;
   transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-/* Optional hidden state */
 .preloader.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-/* --------------------------------------------------
-   Image Overlay Layer (IN FRONT of green)
--------------------------------------------------- */
 #loader-gif {
   position: absolute;
   inset: 0;
   width: 100vw;
   height: 100vh;
-
-  background-image: url("system/images/loading/vo8xmas.png");
+  background-image: url("../system/images/loading/vo8xmas.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -74,63 +56,50 @@
   pointer-events: none;
 }
 
-/* --------------------------------------------------
-   UI Layer (Text + Progress + Counter)
--------------------------------------------------- */
 .loading-text {
   color: #000;
   font-size: 1rem;
   text-align: center;
-
   z-index: 2;
 }
 
-/* Percentage Counter */
 #counter {
   position: absolute;
   top: 16px;
   left: 16px;
-
   color: var(--preloader-text-color);
   font-size: 0.9rem;
   font-weight: 600;
-
   z-index: 2;
 }
 
-/* --------------------------------------------------
-   Progress Bar
--------------------------------------------------- */
 .load-progress-bar {
   position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-
   width: 500px;
   max-width: 85%;
   height: 8px;
-
   background: rgba(255, 255, 255, 0.25);
   border-radius: 4px;
   overflow: hidden;
-
   z-index: 2;
 }
 
 .load-progress-fill {
   width: 0%;
   height: 100%;
-
   background: #ffffff;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
+
 #loaderText {
-  visibility: hidden; /* keeps space */
-  /* OR */
-  display: none; /* removes space */
+  visibility: hidden;
+  display: none;
 }
+
 #loader {
   width: 400px;
   height: 10px;
@@ -145,36 +114,30 @@
   background: linear-gradient(90deg, #ff3b3b, #ff7676);
   transition: width 0.3s ease;
 }
-  </style>
-  <link rel="stylesheet" href="../system/css/themes.css" />
-  <link rel="stylesheet" href="../system/css/main.css" />
-  <link rel="stylesheet" href="../system/css/commands.css" />
+</style>
 
-  <!-- Preload loader GIFs -->
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/loading/v078xmasfixed.png">
-  <link rel="preload" as="image"
-    href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-  <link rel="preload" as="image"
-    href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-  <link rel="preload" as="image"
-    href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
-  <link rel="preload" as="image"
-    href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
+<link rel="stylesheet" href="../system/css/themes.css" />
+<link rel="stylesheet" href="../system/css/main.css" />
+<link rel="stylesheet" href="../system/css/commands.css" />
 
-  <!-- Discord Widget -->
-  <script async defer src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"></script>
-  <script>
-    window.addEventListener("load", () => {
-      if (typeof Crate !== "undefined") {
-        new Crate({
-          server: '1451796462517096642', // server
-          channel: '1451796463368667218' // general
-        });
-      }
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/loading/v078xmasfixed.png">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/5lackerish/themeify/main/redux/blankgif.png">
+
+<script async defer src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"></script>
+<script>
+window.addEventListener("load", () => {
+  if (typeof Crate !== "undefined") {
+    new Crate({
+      server: "1451796462517096642",
+      channel: "1451796463368667218"
     });
-  </script>
+  }
+});
+</script>
 
-<!-- Social Meta -->
 <meta property="og:title" content="WannaSmile" />
 <meta property="og:description" content="WannaSmile is a personal web project showcasing various tools, pages, and experiments." />
 <meta property="og:image" content="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/meta/images/11.png" />
@@ -186,83 +149,74 @@
 <meta name="twitter:title" content="WannaSmile" />
 <meta name="twitter:description" content="A personal web project featuring tools, pages, and visual elements." />
 <meta name="twitter:image" content="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/meta/images/11.png" />
+</head>
 
 <body>
 
-  <!-- ================= PRELOADER ================= -->
 <div id="preloader" class="preloader">
-  <!-- GIF/Image Layer -->
-  <div id="loader-gif" style="background-image: url('../system/images/loading/vo8xmas.png');"></div>
-  
-  <!-- Progress Bar -->
+  <div id="loader-gif" style="background-image:url('../system/images/loading/vo8xmas.png');"></div>
   <div class="load-progress-bar">
     <div id="progressBar" class="load-progress-fill"></div>
   </div>
-
-  <!-- Text Layer -->
-  <div id="loaderText" class="loading-text" style="color: white; visibility: visible;">Loading Assets...</div>
-
-  <!-- Counter -->
+  <div id="loaderText" class="loading-text" style="color:white;visibility:visible;">Loading Assets...</div>
   <div id="counter">0%</div>
 </div>
 
-<!-- ================= HEADER ================= -->
 <div id="topBar">
-  <header>
-    <nav class="nav-links">
+<header>
+<nav class="nav-links">
 <a href="index.html">Home</a>
 <a href="../pages/header/favorites.html">Favorites</a>
 <a href="../pages/header/discovery.html">Discovery</a>
 <a href="../pages/header/settings.html">Settings</a>
 <a href="../pages/header/support.html">Support</a>
 <a href="../pages/header/info.html">Info</a>
-      <div class="pages-anchor">
-        <button class="arrowleft" onclick="prevPage()">
-          <img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/left.png">
-        </button>
-        <span class="page-indicator">...</span>
-        <button class="arrowright" onclick="nextPage()">
-          <img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/right.png">
-        </button>
-      </div>
-    </nav>
+<div class="pages-anchor">
+<button class="arrowleft" onclick="prevPage()">
+<img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/left.png">
+</button>
+<span class="page-indicator">...</span>
+<button class="arrowright" onclick="nextPage()">
+<img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/right.png">
+</button>
+</div>
+</nav>
 
-    <div class="header-controls">
-      <div class="search-box">
-        <input id="searchInputHeader" type="text" placeholder="Search..." />
-        <button id="searchBtnHeader">
-          <img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/search.png">
-        </button>
-      </div>
+<div class="header-controls">
+<div class="search-box">
+<input id="searchInputHeader" type="text" placeholder="Search..." />
+<button id="searchBtnHeader">
+<img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/search.png">
+</button>
+</div>
 <a href="../pages/header/profile.html">
 <img id="pfp" src="../system/images/icons/profile.png">
-      </a>
-      <button id="dashboardBtn">
-        <img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/dashboard.png">
-      </button>
-    </div>
-  </header>
+</a>
+<button id="dashboardBtn">
+<img src="https://raw.githubusercontent.com/5lackerish/5lackerish.github.io/main/system/images/icons/dashboard.png">
+</button>
+</div>
+</header>
 
-  <div id="quoteWrapper">
-    <p id="quoteBox">Loading...</p>
-  </div>
+<div id="quoteWrapper">
+<p id="quoteBox">Loading...</p>
+</div>
 </div>
 
-<!-- ================= SIDEBAR ================= -->
 <aside id="dashboardMenu" class="dashboard-menu">
-  <p>pages</p>
-  <a href="../pages/dashboard/music-player.html">Music Player</a>
-  <a href="../pages/dashboard/themes.html">Themes</a>
-  <a href="../pages/dashboard/credits.html">Credits</a>
-  <p>dev tools</p>
-  <a href="../pages/dashboard/devtools/rawfetch.html">raw image link fetcher</a>
-  <a href="../pages/dashboard/devtools/textflip.html">text flip/mirror</a>
-  <p>other</p>
-  <a href="../pages/dashboard/alternative.html">Alternative Links</a>
+<p>pages</p>
+<a href="../pages/dashboard/music-player.html">Music Player</a>
+<a href="../pages/dashboard/themes.html">Themes</a>
+<a href="../pages/dashboard/credits.html">Credits</a>
+<p>dev tools</p>
+<a href="../pages/dashboard/devtools/rawfetch.html">raw image link fetcher</a>
+<a href="../pages/dashboard/devtools/textflip.html">text flip/mirror</a>
+<p>other</p>
+<a href="../pages/dashboard/alternative.html">Alternative Links</a>
 </aside>
 
 <main>
-  <div id="container">Loading...</div>
+<div id="container">Loading...</div>
 </main>
 
 <button id="toTopBtn">⬆ Top</button>
@@ -274,216 +228,57 @@
 <a href="../pages/footer/SBF.html">Suggestions | Bugs | Fixes</a>
 <a href="../pages/footer/social.html">Socials</a>
 <a href="../pages/footer/download.html">download versions</a>
-  <a href="../pages/footer/version.html" id="footerVersion">Version loading...</a>
+<a href="../pages/footer/version.html" id="footerVersion">Version loading...</a>
 </footer>
 
 <script>
-  // List of image URLs via jsDelivr
-  const images = [
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/bleh.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/catcher.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/clown.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/clowninabox.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/dream.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/eye.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/eyes.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/glitched.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/me.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/purpleu.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/sleeppy.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/smile.png",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/starry.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/starwalk.jpeg",
-    "https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/yum.jpeg"
-  ];
-
-  // Pick a random image
-  const randomImage = images[Math.floor(Math.random() * images.length)];
-
-  // Set the image src
-  document.getElementById("pfp").src = randomImage;
+const images=[
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/bleh.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/catcher.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/clown.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/clowninabox.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/dream.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/eye.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/eyes.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/glitched.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/me.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/purpleu.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/sleeppy.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/smile.png",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/starry.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/starwalk.jpeg",
+"https://cdn.jsdelivr.net/gh/mcmattyobriore/yogurtyooo.github.io@main/system/images/profile/yum.jpeg"
+];
+document.getElementById("pfp").src=images[Math.floor(Math.random()*images.length)];
 </script>
-  
-<!-- ================= JS (jsDelivr) ================= -->
+
 <script src="../system/js/settings.js" defer></script>
 <script src="../system/js/main.js" defer></script>
 <script src="../system/js/searcherror.js" defer></script>
-<script src="../system/js/index.js" defer></script>
+<script src="../system/js/index.js" defer></cript>
 <script src="../system/js/version.js" defer></script>
 <script src="../system/js/all.js" defer></script>
 <script src="../system/js/local-quotes.js"></script>
 <script src="../system/js/top.js" defer></script>
 <script src="../system/js/pageflipper.js" defer></script>
-<script defer>
-(function () {
-
-  let patterns = [];
-
-  fetch("../system/json/blank.json")
-    .then(r => {
-      if (!r.ok) throw new Error("Failed to load JSON");
-      return r.json();
-    })
-    .then(data => {
-      if (!Array.isArray(data.patterns)) {
-        throw new Error("patterns missing in JSON");
-      }
-
-      patterns = data.patterns;
-      console.log("Patterns loaded:", patterns);
-
-      init(); // only start AFTER patterns exist
-    })
-    .catch(err => console.error(err));
-
-  function init() {
-
-    function matchesProject(url) {
-      return patterns.some(p => url.startsWith(p));
-    }
-
-    async function fetchPageTitle(url) {
-      try {
-        const res = await fetch(url);
-        const text = await res.text();
-        const match = text.match(/<title>(.*?)<\/title>/i);
-        return match ? match[1] : url;
-      } catch {
-        return url;
-      }
-    }
-
-    async function openProject(url) {
-      const win = window.open("about:blank");
-      const title = await fetchPageTitle(url);
-
-      win.document.write(`
-        <!doctype html>
-        <html>
-        <head>
-          <title>${title}</title>
-          <style>
-            body { margin:0; overflow:hidden; background:black; }
-            embed {
-              position:absolute;
-              inset:0;
-              width:100vw;
-              height:100vh;
-              border:none;
-            }
-          </style>
-        </head>
-        <body>
-          <embed src="${url}">
-        </body>
-        </html>
-      `);
-
-      win.document.close();
-    }
-
-    document.addEventListener("click", e => {
-      const a = e.target.closest("a");
-      if (!a?.href) return;
-
-      if (matchesProject(a.href)) {
-        e.preventDefault();
-        openProject(a.href);
-      }
-    });
-
-    const originalOpen = window.open;
-    window.open = function (url, ...rest) {
-      if (typeof url === "string" && matchesProject(url)) {
-        openProject(url);
-        return null;
-      }
-      return originalOpen.call(window, url, ...rest);
-    };
-  }
-
-})();
-</script>
 
 <audio id="bgm" autoplay muted></audio>
 
 <script>
-const tracks = [
-    "audio/bgm1.mp3",
-    "audio/bgm2.mp3",
-    "audio/bgm3.mp3",
-    "audio/bgm4.mp3",
-    "audio/bgm5.mp3"
-];
-
-const bgm = document.getElementById("bgm");
-bgm.volume = 0.2;
-
-// Pick & play random track
-function playRandomTrack() {
-    const randomIndex = Math.floor(Math.random() * tracks.length);
-    bgm.src = tracks[randomIndex];
-    bgm.play().catch(() => {});
+const tracks=["audio/bgm1.mp3","audio/bgm2.mp3","audio/bgm3.mp3","audio/bgm4.mp3","audio/bgm5.mp3"];
+const bgm=document.getElementById("bgm");
+bgm.volume=0.2;
+function playRandomTrack(){
+bgm.src=tracks[Math.floor(Math.random()*tracks.length)];
+bgm.play().catch(()=>{});
 }
-
-// When a track ends, play another
-bgm.addEventListener("ended", playRandomTrack);
-
-// Start muted autoplay
+bgm.addEventListener("ended",playRandomTrack);
 playRandomTrack();
-
-// Guaranteed unmute + play on first click
-window.addEventListener("click", () => {
-    bgm.muted = false;
-    bgm.play().catch(e => console.log("Playback blocked:", e));
-}, { once: true });
+window.addEventListener("click",()=>{
+bgm.muted=false;
+bgm.play().catch(()=>{});
+},{once:true});
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const images = document.querySelectorAll('img');
-    const progressBar = document.getElementById('progressBar');
-    const counter = document.getElementById('counter');
-    const preloader = document.getElementById('preloader');
-    
-    let loadedCount = 0;
-    const totalAssets = images.length;
 
-    // Handle pages with no images immediately
-    if (totalAssets === 0) {
-        finishLoading();
-        return;
-    }
-
-    function updateProgress() {
-        loadedCount++;
-        const percentage = Math.round((loadedCount / totalAssets) * 100);
-        
-        // Update UI
-        progressBar.style.width = percentage + "%";
-        counter.innerText = percentage + "%";
-
-        if (loadedCount >= totalAssets) {
-            // Small delay so the user sees 100% before it vanishes
-            setTimeout(finishLoading, 500);
-        }
-    }
-
-    function finishLoading() {
-        preloader.classList.add('hidden');
-        // Optional: Remove from DOM after transition to save memory
-        setTimeout(() => preloader.style.display = 'none', 600);
-    }
-
-    // Attach listeners to every image
-    images.forEach(img => {
-        if (img.complete) {
-            updateProgress();
-        } else {
-            img.addEventListener('load', updateProgress);
-            img.addEventListener('error', updateProgress); // Count errors too so it doesn't get stuck
-        }
-    });
-});
-</script>
 </body>
 </html>
