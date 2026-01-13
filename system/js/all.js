@@ -330,6 +330,6 @@
     if (typeof window.initQuotes === "function") await window.initQuotes();
 
     Preloader.finish();
-    console.log("✅ WannaSmile Ready");
+    console.log("Everything ready and loaded properly");
   });
 })();
