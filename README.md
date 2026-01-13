@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> Suggestions & Bug fixes
+
+> All suggestions are welcome to be continued to be asked of me, I will do as much as I can to include everyone’s suggestions and get sources for the assets people want to enjoy the most. And of course I will be swift to deliver with bug fixes and new content.
 # Welcome to Wanna5mile!
 - uses google sheets api for asset block building
 - final version (v1) will contain 750 assets.
@@ -54,13 +58,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-> [!IMPORTANT]
-> Suggestions & Bug fixes
-
-> All suggestions are welcome to be continued to be asked of me, I will do as much as I can to include everyone’s suggestions and get sources for the assets people want to enjoy the most. And of course I will be swift to deliver with bug fixes and new content, fair well for now but not forever!
-
-Hide or Don’t show again
-
-Click the buttons at the bottom but know that either if you read or not you can click “don’t show again” without any worry to forget or miss out on the announcement, I will be adding the page link to the header! 
-
-“Announcement” <—-
