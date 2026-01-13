@@ -438,5 +438,52 @@ window.addEventListener("click", () => {
     bgm.play().catch(e => console.log("Playback blocked:", e));
 }, { once: true });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll('img');
+    const progressBar = document.getElementById('progressBar');
+    const counter = document.getElementById('counter');
+    const preloader = document.getElementById('preloader');
+    
+    let loadedCount = 0;
+    const totalAssets = images.length;
+
+    // Handle pages with no images immediately
+    if (totalAssets === 0) {
+        finishLoading();
+        return;
+    }
+
+    function updateProgress() {
+        loadedCount++;
+        const percentage = Math.round((loadedCount / totalAssets) * 100);
+        
+        // Update UI
+        progressBar.style.width = percentage + "%";
+        counter.innerText = percentage + "%";
+
+        if (loadedCount >= totalAssets) {
+            // Small delay so the user sees 100% before it vanishes
+            setTimeout(finishLoading, 500);
+        }
+    }
+
+    function finishLoading() {
+        preloader.classList.add('hidden');
+        // Optional: Remove from DOM after transition to save memory
+        setTimeout(() => preloader.style.display = 'none', 600);
+    }
+
+    // Attach listeners to every image
+    images.forEach(img => {
+        if (img.complete) {
+            updateProgress();
+        } else {
+            img.addEventListener('load', updateProgress);
+            img.addEventListener('error', updateProgress); // Count errors too so it doesn't get stuck
+        }
+    });
+});
+</script>
 </body>
 </html>
