@@ -192,20 +192,18 @@
 <!-- ================= PRELOADER ================= -->
 <div id="preloader" class="preloader">
   <!-- GIF/Image Layer -->
-  <!--<div id="loader-gif">
-    <img id="loaderImage" src="../system/images/loading/vo8xmas.png" alt="Loading">
-    <img id="loadedImage" src="../system/images/loading/vo8xmas.png" alt="Loaded">
-  </div>-->
+  <div id="loader-gif" style="background-image: url('../system/images/loading/vo8xmas.png');"></div>
+  
   <!-- Progress Bar -->
   <div class="load-progress-bar">
     <div id="progressBar" class="load-progress-fill"></div>
   </div>
 
   <!-- Text Layer -->
-  <div id="loaderText" class="loading-text">Loading...</div>
+  <div id="loaderText" class="loading-text" style="color: white; visibility: visible;">Loading Assets...</div>
 
   <!-- Counter -->
-  <div id="counter"></div>
+  <div id="counter">0%</div>
 </div>
 
 <!-- ================= HEADER ================= -->
@@ -441,36 +439,50 @@ window.addEventListener("click", () => {
 }, { once: true });
 </script>
 <script>
-window.addEventListener("load", () => {
-  const loader = document.getElementById("preloader");
-  const bar = document.getElementById("progressBar");
-  const counter = document.getElementById("counter");
+document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll('img');
+    const progressBar = document.getElementById('progressBar');
+    const counter = document.getElementById('counter');
+    const preloader = document.getElementById('preloader');
+    
+    let loadedCount = 0;
+    const totalAssets = images.length;
 
-  if (!loader || !bar) return;
-
-  let progress = 0;
-
-  const fillInterval = setInterval(() => {
-    progress += Math.random() * 7;
-
-    if (progress >= 90) {
-      progress = 90;
-      clearInterval(fillInterval);
+    // Handle pages with no images immediately
+    if (totalAssets === 0) {
+        finishLoading();
+        return;
     }
 
-    bar.style.width = progress + "%";
-    if (counter) counter.textContent = Math.floor(progress) + "%";
-  }, 180);
+    function updateProgress() {
+        loadedCount++;
+        const percentage = Math.round((loadedCount / totalAssets) * 100);
+        
+        // Update UI
+        progressBar.style.width = percentage + "%";
+        counter.innerText = percentage + "%";
 
-  // Finish loading
-  setTimeout(() => {
-    bar.style.width = "100%";
-    if (counter) counter.textContent = "100%";
+        if (loadedCount >= totalAssets) {
+            // Small delay so the user sees 100% before it vanishes
+            setTimeout(finishLoading, 500);
+        }
+    }
 
-    setTimeout(() => {
-      loader.classList.add("hidden");
-    }, 350);
-  }, 12000);
+    function finishLoading() {
+        preloader.classList.add('hidden');
+        // Optional: Remove from DOM after transition to save memory
+        setTimeout(() => preloader.style.display = 'none', 600);
+    }
+
+    // Attach listeners to every image
+    images.forEach(img => {
+        if (img.complete) {
+            updateProgress();
+        } else {
+            img.addEventListener('load', updateProgress);
+            img.addEventListener('error', updateProgress); // Count errors too so it doesn't get stuck
+        }
+    });
 });
 </script>
 </body>
