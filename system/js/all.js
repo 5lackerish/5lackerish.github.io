@@ -13,6 +13,7 @@
   };
 
   const getSortMode = () => localStorage.getItem("sortMode") || "sheet";
+
   document.addEventListener("sortModeChanged", () => {
     if (window.assetsData && typeof window.refreshCards === "function") {
       window.refreshCards();
@@ -33,15 +34,6 @@
     window.dom = {
       container: $("#container"),
       pageIndicator: $(".page-indicator") || $("#page-indicator"),
-      searchInput: $("#searchInputHeader"),
-      searchBtn: $("#searchBtnHeader"),
-      updatePopup: $("#updatePopup"),
-      updatePopupContent: $(".update-popup-content"),
-      viewUpdateBtn: $("#viewUpdateBtn"),
-      viewUpdateInfoBtn: $("#viewUpdateInfoBtn"),
-      closeUpdateBtn: $("#closeUpdateBtn"),
-      dontShowBtn: $("#dontShowBtn"),
-      updateVideo: $("#updateVideo"),
       preloader: $("#preloader"),
       progressBar: $("#progressBar"),
       counter: $("#counter"),
@@ -50,15 +42,8 @@
     window.config = {
       fallbackImage:
         "https://raw.githubusercontent.com/01110010-00110101/01110010-00110101.github.io/main/system/images/404_blank.png",
-      fallbackLink: "https://01110010-00110101.github.io./source/dino/",
-      gifBase:
-        "https://raw.githubusercontent.com/01110010-00110101/01110010-00110101.github.io/main/system/images/GIF/",
       sheetUrl:
         "https://script.google.com/macros/s/AKfycbzw69RTChLXyis4xY9o5sUHtPU32zaMeKaR2iEliyWBsJFvVbTbMvbLNfsB4rO4gLLzTQ/exec",
-      updateTrailerSrc: "",
-      updateLink: "system/pages/version-log.html",
-      quotesJson:
-        "https://raw.githubusercontent.com/01110010-00110101/01110010-00110101.github.io/main/system/json/quotes.json",
     };
   }
 
@@ -70,14 +55,10 @@
       window.favorites = new Set();
     }
 
-    window.saveFavorites = () =>
-      localStorage.setItem("favorites", JSON.stringify([...window.favorites]));
-
     window.refreshCards = () => {
-      if (!window.assetsData || typeof createAssetCards !== "function") return [];
+      if (!window.assetsData) return [];
       const promises = createAssetCards(window.assetsData);
       if (typeof renderPage === "function") renderPage();
-      if (typeof startPlaceholderCycle === "function") startPlaceholderCycle();
       return promises;
     };
   }
@@ -89,49 +70,27 @@
     container.innerHTML = "";
     const imagePromises = [];
     const frag = document.createDocumentFragment();
-    const sortMode = getSortMode();
-    const isFav = (t) => window.favorites.has(safeStr(t).toLowerCase());
 
-    let sorted = Array.isArray(data) ? [...data] : [];
-    if (sortMode === "alphabetical") {
-      sorted.sort((a, b) =>
-        safeStr(a.title).localeCompare(safeStr(b.title), undefined, {
-          numeric: true,
-          sensitivity: "base",
-        })
-      );
-    }
-
-    for (const asset of sorted) {
-      const title = safeStr(asset.title).trim();
-      const imageSrc = safeStr(asset.image) || config.fallbackImage;
-
-      const card = document.createElement("div");
-      card.className = "asset-card";
-      card.dataset.page = asset.page || 1;
-      card.dataset.filtered = "true";
-      card.dataset.title = title.toLowerCase();
-
+    for (const asset of data) {
       const img = document.createElement("img");
       img.className = "asset-img";
-      img.alt = title;
+      img.alt = asset.title || "";
 
-      const promise = new Promise((resolve) => {
+      const p = new Promise((resolve) => {
         const tmp = new Image();
         tmp.onload = () => {
-          img.src = imageSrc;
+          img.src = asset.image || config.fallbackImage;
           resolve();
         };
         tmp.onerror = () => {
           img.src = config.fallbackImage;
           resolve();
         };
-        tmp.src = imageSrc;
+        tmp.src = asset.image || config.fallbackImage;
       });
 
-      imagePromises.push(promise);
-      card.appendChild(img);
-      frag.appendChild(card);
+      imagePromises.push(p);
+      frag.appendChild(img);
     }
 
     container.appendChild(frag);
@@ -140,22 +99,60 @@
 
   function initLoadingScreen(total) {
     const { preloader, progressBar, counter } = dom;
-    if (!preloader || !progressBar) return () => {};
-
     let loaded = 0;
 
     return () => {
       loaded++;
       const percent = Math.floor((loaded / total) * 100);
       progressBar.style.width = percent + "%";
-      if (counter) counter.textContent = percent + "%";
+      counter.textContent = percent + "%";
 
       if (loaded >= total) {
         progressBar.style.width = "100%";
-        if (counter) counter.textContent = "100%";
-        setTimeout(() => preloader.classList.add("hidden"), 300);
+        counter.textContent = "100%";
+        setTimeout(() => preloader.classList.add("hidden"), 400);
       }
     };
+  }
+
+  /* ================= ADDED: scroll animation during loading ================= */
+  async function loadingScrollAnimation() {
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    for (let i = 0; i < 2; i++) {
+      window.scrollTo({ top: maxScroll, behavior: "smooth" });
+      await delay(600);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      await delay(600);
+    }
+  }
+
+  /* ================= ADDED: page cycling during loading ================= */
+  async function loadingPageCycle() {
+    if (typeof nextPage !== "function" || typeof prevPage !== "function") return;
+
+    for (let i = 1; i <= 10; i++) {
+      nextPage();
+      await delay(350);
+    }
+
+    for (let i = 10; i > 1; i--) {
+      prevPage();
+      await delay(200);
+    }
+  }
+
+  /* ================= ADDED: prerender hints ================= */
+  function prerenderPages() {
+    if (!("supports" in HTMLScriptElement)) return;
+
+    const script = document.createElement("script");
+    script.type = "speculationrules";
+    script.textContent = JSON.stringify({
+      prerender: [
+        { source: "list", urls: ["index.html", "favorites.html", "discovery.html"] }
+      ]
+    });
+    document.head.appendChild(script);
   }
 
   async function loadAssets() {
@@ -167,15 +164,13 @@
 
     window.assetsData = data;
 
-    const isFavPage = location.pathname.toLowerCase().includes("favorites.html");
-    const filtered = isFavPage
-      ? data.filter((a) =>
-          window.favorites.has(safeStr(a.title).toLowerCase())
-        )
-      : data;
-
-    const imagePromises = createAssetCards(filtered || []);
+    const imagePromises = createAssetCards(data || []);
     const updateProgress = initLoadingScreen(imagePromises.length || 1);
+
+    /* ADDED: start visual loading illusion + prerender */
+    prerenderPages();
+    loadingScrollAnimation();
+    loadingPageCycle();
 
     for (const p of imagePromises) {
       await p;
@@ -183,6 +178,16 @@
     }
 
     if (typeof renderPage === "function") renderPage();
+
+    /* ============ NEW: reset page to 1 after loading finishes ============ */
+    if (typeof goToPage === "function") {
+      goToPage(1); // attempts to set current page back to 1
+    } else if (typeof nextPage === "function" && typeof prevPage === "function") {
+      // fallback: cycle back to page 1
+      while (currentPage && currentPage > 1) {
+        prevPage();
+      }
+    }
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
