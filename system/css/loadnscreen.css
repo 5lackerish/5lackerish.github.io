@@ -28,7 +28,7 @@
   
   /* Background Image Setup */
   background-color: #a5ff00; /* Fallback color */
-  background-image: url("../system/images/loading/pg67.png");
+  background-image: none;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
